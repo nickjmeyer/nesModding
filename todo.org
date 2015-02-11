@@ -1,0 +1,52 @@
+#+title: To-Do List for NES Modding
+#+author: Nicholas J Meyer
+#+email: nick.j.meyer@gmail.com
+#+date:
+
+#+startup: showall
+
+* TODO Gut broken NES components
+  - [ ] Clean inside
+    
+* TODO Install RetroArch on Odroid C1
+  - [ ] Install Android
+  - [ ] Clone RetroArch repo and install
+  - [ ] Check sound and video
+  - [ ] Obtain ROMs and test with keyboard and mouse
+
+* TODO Mod Controllers for games and mouse
+  - [ ] Learn Arduino basics
+    - [ ] Begin with starter kit and simple projects
+    - [ ] Implement simple button program to send command to julia via
+      serial
+    - [ ] Modify above program to send key stroke on button press
+  - [ ] Mod Wii Nunchuck to be a mouse
+    - [ ] Supplies
+      - [ ] Wii Nunchuck
+      - [ ] Arduino Mini (no USB dongle, smaller profile)
+      - [ ] USB serial connection for Arduino (need for programming)
+      - [ ] USB cable
+      - [ ] Breadboard and cables for staging
+    - [ ] Configure arduino to send Nunchuck output to julia via serial
+    - [ ] Write julia script to send serial messages as mouse commands
+    - [ ] Test reliability and plug/unplug
+  - [ ] Mod NES controllers to send keyboard inputs for ROMs
+    - [ ] Supplies
+      - [ ] NES controller for XBMC
+      - [ ] Console controllers for ROMs
+      - [ ] Arduino Mini
+      - [ ] USB serial connection for Arduino
+      - [ ] USB cable
+      - [ ] Breadboard and cables for staging
+    - [ ] Configure controller to send keyboard inputs via julia script
+  - [ ] Mod other controllers
+    - [ ] SNES
+    - [ ] N64
+  - [ ] Replace USB cable connections with bluetooth connections
+    - [ ] Supplies
+      - [ ] BLE shields
+      - [ ] Labels to match controller with receiver
+    - [ ] NES remote for XBMC
+    - [ ] Console controllers for ROMs (maybe?)
+
+
