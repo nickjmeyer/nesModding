@@ -9,17 +9,25 @@
   - [ ] Clean inside
     
 * TODO Install RetroArch on Odroid C1
-  - [ ] Install Android
+  - [X] Install Android
   - [ ] Clone RetroArch repo and install
   - [ ] Check sound and video
   - [ ] Obtain ROMs and test with keyboard and mouse
 
 * TODO Mod Controllers for games and mouse
-  - [ ] Learn Arduino basics
-    - [ ] Begin with starter kit and simple projects
-    - [ ] Implement simple button program to send command to julia via
-      serial
-    - [ ] Modify above program to send key stroke on button press
+  - [-] Writing the code
+    - [X] Begin with starter kit and simple projects
+    - [ ] Implement simple button program to send keystroke to host
+    - [ ] Get a MWE for the nRF24L01+ modules
+    - [ ] Send the keystroke ofer the nRF24L01+ connection
+  - [ ] Power efficiency
+    - [ ] Measure the amperage with the multimeter
+    - [ ] Determine battery life for coin,AA,Li-ion
+    - [ ] Research constructing an Arduino from scratch
+      - [ ] Micoprocessor
+      - [ ] Voltage
+      - [ ] Clock rate
+      - [ ] Too many other tings...
   - [ ] Mod Wii Nunchuck to be a mouse
     - [ ] Supplies
       - [ ] Wii Nunchuck
