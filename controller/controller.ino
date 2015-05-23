@@ -53,8 +53,8 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 /* role_e role = role_pong_back; */
 
 // button
-const unsigned int nButtons = 1;
-const unsigned int buttonPin[] = {7};
+const unsigned int nButtons = 2;
+const unsigned int buttonPin[] = {6,7};
 
 unsigned int getButtons(const unsigned int nButtons,
 			const unsigned int * const buttonPin);
@@ -153,19 +153,19 @@ void loop(void)
   /* if (role == role_ping_out) */
   int buttonState = digitalRead(buttonPin[0]);
   
-  /* unsigned int b = getButtons(nButtons,buttonPin); */
+  unsigned int b = getButtons(nButtons,buttonPin);
   
-  /* printf("Buttons: %lu\n",b); */
+  printf("Buttons: %u\n\r",b);
   
-  if(buttonState == HIGH)
+  if(b > 0)
     {
       // First, stop listening so we can talk.
       radio.stopListening();
 
       // Take the time, and send it.  This will block until complete
-      unsigned long time = millis();
-      printf("Now sending %lu...",time);
-      bool ok = radio.write( &time, sizeof(unsigned long) );
+      /* unsigned long time = millis(); */
+      /* printf("Now sending %lu...",time); */
+      bool ok = radio.write( &b, sizeof(unsigned int) );
     
       if (ok)
 	printf("ok...");
@@ -190,17 +190,18 @@ void loop(void)
       else
 	{
 	  // Grab the response, compare, and send to debugging spew
-	  unsigned long got_time;
-	  radio.read( &got_time, sizeof(unsigned long) );
+	  unsigned int got_buttons;
+	  radio.read( &got_buttons, sizeof(unsigned int) );
 
 	  // Spew it
-	  printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
+	  printf("Got response %u\n\r",got_buttons);
 	}
 
-      // Try again 1s later
-      delay(1000);
     }
 
+  // Try again 1s later
+  delay(1000);
+  
   //
   // Pong back role.  Receive each packet, dump it out, and send it back
   //

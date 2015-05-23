@@ -133,49 +133,49 @@ void loop(void)
   // Ping out role.  Repeatedly send the current time
   //
 
-  if (role == role_ping_out)
-    {
-      // First, stop listening so we can talk.
-      radio.stopListening();
+  /* if (role == role_ping_out) */
+  /*   { */
+  /*     // First, stop listening so we can talk. */
+  /*     radio.stopListening(); */
 
-      // Take the time, and send it.  This will block until complete
-      unsigned long time = millis();
-      printf("Now sending %lu...",time);
-      bool ok = radio.write( &time, sizeof(unsigned long) );
+  /*     // Take the time, and send it.  This will block until complete */
+  /*     unsigned long time = millis(); */
+  /*     printf("Now sending %lu...",time); */
+  /*     bool ok = radio.write( &time, sizeof(unsigned long) ); */
     
-      if (ok)
-	printf("ok...");
-      else
-	printf("failed.\n\r");
+  /*     if (ok) */
+  /* 	printf("ok..."); */
+  /*     else */
+  /* 	printf("failed.\n\r"); */
 
-      // Now, continue listening
-      radio.startListening();
+  /*     // Now, continue listening */
+  /*     radio.startListening(); */
 
-      // Wait here until we get a response, or timeout (250ms)
-      unsigned long started_waiting_at = millis();
-      bool timeout = false;
-      while ( ! radio.available() && ! timeout )
-	if (millis() - started_waiting_at > 200 )
-	  timeout = true;
+  /*     // Wait here until we get a response, or timeout (250ms) */
+  /*     unsigned long started_waiting_at = millis(); */
+  /*     bool timeout = false; */
+  /*     while ( ! radio.available() && ! timeout ) */
+  /* 	if (millis() - started_waiting_at > 200 ) */
+  /* 	  timeout = true; */
 
-      // Describe the results
-      if ( timeout )
-	{
-	  printf("Failed, response timed out.\n\r");
-	}
-      else
-	{
-	  // Grab the response, compare, and send to debugging spew
-	  unsigned long got_time;
-	  radio.read( &got_time, sizeof(unsigned long) );
+  /*     // Describe the results */
+  /*     if ( timeout ) */
+  /* 	{ */
+  /* 	  printf("Failed, response timed out.\n\r"); */
+  /* 	} */
+  /*     else */
+  /* 	{ */
+  /* 	  // Grab the response, compare, and send to debugging spew */
+  /* 	  unsigned long got_time; */
+  /* 	  radio.read( &got_time, sizeof(unsigned long) ); */
 
-	  // Spew it
-	  printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
-	}
+  /* 	  // Spew it */
+  /* 	  printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time); */
+  /* 	} */
 
-      // Try again 1s later
-      delay(1000);
-    }
+  /*     // Try again 1s later */
+  /*     delay(1000); */
+  /*   } */
 
   //
   // Pong back role.  Receive each packet, dump it out, and send it back
@@ -187,15 +187,15 @@ void loop(void)
       if ( radio.available() )
 	{
 	  // Dump the payloads until we've gotten everything
-	  unsigned long got_time;
+	  unsigned int got_buttons;
 	  bool done = false;
 	  while (!done)
 	    {
 	      // Fetch the payload, and see if this was the last one.
-	      done = radio.read( &got_time, sizeof(unsigned long) );
+	      done = radio.read( &got_buttons, sizeof(unsigned int) );
 
 	      // Spew it
-	      printf("Got payload %lu...",got_time);
+	      printf("Got payload %u...",got_buttons);
 
 	      // Delay just a little bit to let the other unit
 	      // make the transition to receiver
@@ -209,7 +209,7 @@ void loop(void)
 	  radio.stopListening();
 
 	  // Send the final one back.
-	  radio.write( &got_time, sizeof(unsigned long) );
+	  radio.write( &got_buttons, sizeof(unsigned int) );
 	  printf("Sent response.\n\r");
 
 	  // Now, resume listening so we catch the next packets.
@@ -222,26 +222,26 @@ void loop(void)
   //
 
   /* if ( Serial.available() ) */
-    {
-      int buttonState = digitalRead(buttonPin);
-      if ( buttonState == HIGH && role == role_pong_back )
-	{
-	  /* printf("*** CHANGING TO TRANSMIT ROLE -- PRESS 'R' TO SWITCH BACK\n\r"); */
+    /* { */
+    /*   int buttonState = digitalRead(buttonPin); */
+    /*   if ( buttonState == HIGH && role == role_pong_back ) */
+    /* 	{ */
+    /* 	  /\* printf("*** CHANGING TO TRANSMIT ROLE -- PRESS 'R' TO SWITCH BACK\n\r"); *\/ */
 
-	  // Become the primary transmitter (ping out)
-	  role = role_ping_out;
-	  radio.openWritingPipe(pipes[0]);
-	  radio.openReadingPipe(1,pipes[1]);
-	}
-      else if ( buttonState == LOW && role == role_ping_out )
-	{
-	  /* printf("*** CHANGING TO RECEIVE ROLE -- PRESS 'T' TO SWITCH BACK\n\r"); */
+    /* 	  // Become the primary transmitter (ping out) */
+    /* 	  role = role_ping_out; */
+    /* 	  radio.openWritingPipe(pipes[0]); */
+    /* 	  radio.openReadingPipe(1,pipes[1]); */
+    /* 	} */
+    /*   else if ( buttonState == LOW && role == role_ping_out ) */
+    /* 	{ */
+    /* 	  /\* printf("*** CHANGING TO RECEIVE ROLE -- PRESS 'T' TO SWITCH BACK\n\r"); *\/ */
       
-	  // Become the primary receiver (pong back)
-	  role = role_pong_back;
-	  radio.openWritingPipe(pipes[1]);
-	  radio.openReadingPipe(1,pipes[0]);
-	}
-    }
+    /* 	  // Become the primary receiver (pong back) */
+    /* 	  role = role_pong_back; */
+    /* 	  radio.openWritingPipe(pipes[1]); */
+    /* 	  radio.openReadingPipe(1,pipes[0]); */
+    /* 	} */
+    /* } */
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp
