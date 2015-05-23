@@ -124,7 +124,7 @@ void setup(void)
   //
   // setup keyboard
   //
-  Keyboard.begin();
+  /* Keyboard.begin(); */
 
   for(int i = 0; i < 10; ++i){
     printf("%d\n\r",i);
