@@ -56,6 +56,9 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 const unsigned int nButtons = 2;
 const unsigned int buttonPin[] = {6,7};
 
+unsigned curr,prev;
+
+
 unsigned int getButtons(const unsigned int nButtons,
 			const unsigned int * const buttonPin);
 
@@ -139,6 +142,8 @@ void setup(void)
   // Dump the configuration of the rf unit for debugging
   //
 
+  curr = prev = 0;
+
   radio.printDetails();
 }
 
@@ -151,21 +156,22 @@ void loop(void)
   //
 
   /* if (role == role_ping_out) */
-  int buttonState = digitalRead(buttonPin[0]);
+  /* int buttonState = digitalRead(buttonPin[0]); */
   
-  unsigned int b = getButtons(nButtons,buttonPin);
+  curr = getButtons(nButtons,buttonPin);
   
-  printf("Buttons: %u\n\r",b);
-  
-  if(b > 0)
+  if(curr != prev)
     {
+      printf("Buttons: %u\n\r",curr);
+  
       // First, stop listening so we can talk.
       radio.stopListening();
 
       // Take the time, and send it.  This will block until complete
       /* unsigned long time = millis(); */
       /* printf("Now sending %lu...",time); */
-      bool ok = radio.write( &b, sizeof(unsigned int) );
+      bool ok = radio.write( &curr, sizeof(unsigned int) );
+      prev = curr;
     
       if (ok)
 	printf("ok...");

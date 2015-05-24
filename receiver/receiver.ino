@@ -44,16 +44,37 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 //
 
 // The various roles supported by this sketch
-typedef enum { role_ping_out = 1, role_pong_back } role_e;
+/* typedef enum { role_ping_out = 1, role_pong_back } role_e; */
 
 // The debug-friendly names of those roles
-const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
+/* const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"}; */
 
 // The role of the current running sketch
-role_e role = role_pong_back;
+/* role_e role = role_pong_back; */
+
+const unsigned int nButtons = 2;
+const unsigned int keys[] = {97, // a
+			     176}; // return
+const char* name[] = {"a","RETURN"};
+
+unsigned int curr = 0,prev = 0;
 
 // button
-const int buttonPin = 7;
+void keyMap(const unsigned int curr, const unsigned int prev,
+	    const unsigned int nButtons){
+  unsigned int i,change;
+  change = curr ^ prev;
+  for(i = 0; i < nButtons; ++i){
+    if((change & (1u << i)) && (curr & (1u << i))){
+      printf("Press %s\n\r",name[i]);
+      /* Keyboard.press(keys[i]); */
+    }
+    else if(change & (1u << i)){
+      printf("Release %s\n\r",name[i]);
+      /* Keyboard.release(keys[i]); */
+    }
+  }
+}
 
 void setup(void)
 {
@@ -64,9 +85,9 @@ void setup(void)
   Serial.begin(57600);
   printf_begin();
   delay(500);
-  printf("\n\rRF24/examples/GettingStarted/\n\r");
-  printf("ROLE: %s\n\r",role_friendly_name[role]);
-  printf("*** PRESS 'T' to begin transmitting to the other node\n\r");
+  /* printf("\n\rRF24/examples/GettingStarted/\n\r"); */
+  /* printf("ROLE: %s\n\r",role_friendly_name[role]); */
+  /* printf("*** PRESS 'T' to begin transmitting to the other node\n\r"); */
 
   //
   // Setup and configure rf radio
@@ -118,11 +139,13 @@ void setup(void)
     delay(1000);
   }
 
-  pinMode(buttonPin,INPUT);
+  /* pinMode(buttonPin,INPUT); */
   
   //
   // Dump the configuration of the rf unit for debugging
   //
+
+  curr = prev = 0;
 
   radio.printDetails();
 }
@@ -181,8 +204,8 @@ void loop(void)
   // Pong back role.  Receive each packet, dump it out, and send it back
   //
 
-  if ( role == role_pong_back )
-    {
+  /* if ( role == role_pong_back ) */
+  /*   { */
       // if there is data ready
       if ( radio.available() )
 	{
@@ -193,6 +216,10 @@ void loop(void)
 	    {
 	      // Fetch the payload, and see if this was the last one.
 	      done = radio.read( &got_buttons, sizeof(unsigned int) );
+	      curr = got_buttons;
+
+	      keyMap(curr,prev,nButtons);
+	      prev = curr;
 
 	      // Spew it
 	      printf("Got payload %u...",got_buttons);
@@ -215,7 +242,7 @@ void loop(void)
 	  // Now, resume listening so we catch the next packets.
 	  radio.startListening();
 	}
-    }
+    /* } */
 
   //
   // Change roles
