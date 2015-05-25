@@ -100,7 +100,9 @@ void setup(void)
 
   // optionally, reduce the payload size.  seems to
   // improve reliability
-  //radio.setPayloadSize(8);
+  radio.setPayloadSize(8);
+
+  radio.setAutoAck(false);
 
   //
   // Open pipes to other nodes for communication
@@ -118,7 +120,7 @@ void setup(void)
   /*   } */
   /* else */
   /*   { */
-      radio.openWritingPipe(pipes[1]);
+      /* radio.openWritingPipe(pipes[1]); */
       radio.openReadingPipe(1,pipes[0]);
     /* } */
 
@@ -222,25 +224,26 @@ void loop(void)
 	      prev = curr;
 
 	      // Spew it
-	      printf("Got payload %u...",got_buttons);
+	      /* printf("Got payload %u...",got_buttons); */
+	      printf("Got payload %u.\n\r",got_buttons);
 
 	      // Delay just a little bit to let the other unit
 	      // make the transition to receiver
-	      delay(20);
+	      /* delay(20); */
 	    }
 
-	  printf("write...");
-	  Keyboard.write(KEY_RETURN);
+	  /* printf("write..."); */
+	  /* Keyboard.write(KEY_RETURN); */
 
 	  // First, stop listening so we can talk
-	  radio.stopListening();
+	  /* radio.stopListening(); */
 
 	  // Send the final one back.
-	  radio.write( &got_buttons, sizeof(unsigned int) );
-	  printf("Sent response.\n\r");
+	  /* radio.write( &got_buttons, sizeof(unsigned int) ); */
+	  /* printf("Sent response.\n\r"); */
 
 	  // Now, resume listening so we catch the next packets.
-	  radio.startListening();
+	  /* radio.startListening(); */
 	}
     /* } */
 
