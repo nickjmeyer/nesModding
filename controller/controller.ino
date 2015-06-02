@@ -53,18 +53,18 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 /* role_e role = role_pong_back; */
 
 // button
-const unsigned int nButtons = 2;
-const unsigned int buttonPin[] = {6,7};
+const unsigned short nButtons = 2;
+const unsigned short buttonPin[] = {6,7};
 
 unsigned curr,prev;
 
 
-unsigned int getButtons(const unsigned int nButtons,
-			const unsigned int * const buttonPin);
+unsigned short getButtons(const unsigned short nButtons,
+			  const unsigned short * const buttonPin);
 
-unsigned int getButtons(const unsigned int nButtons,
-			const unsigned int * const buttonPin){
-  unsigned int i,buttons = 0,state;
+unsigned short getButtons(const unsigned short nButtons,
+			  const unsigned short * const buttonPin){
+  unsigned short i,buttons = 0,state;
   for(i = 0; i < nButtons; ++i){
     state = digitalRead(buttonPin[i]);
     if(state == HIGH){
@@ -95,7 +95,7 @@ void setup(void)
 
   // optionally, reduce the payload size.  seems to
   // improve reliability
-  radio.setPayloadSize(8);
+  radio.setPayloadSize(sizeof(unsigned short));
 
   //
   // Open pipes to other nodes for communication
@@ -108,9 +108,9 @@ void setup(void)
 
   /* if ( role == role_ping_out ) */
   /*   { */
-      radio.openWritingPipe(pipes[0]);
-      /* radio.openReadingPipe(1,pipes[1]); */
-    /* } */
+  radio.openWritingPipe(pipes[0]);
+  /* radio.openReadingPipe(1,pipes[1]); */
+  /* } */
   /* else */
   /*   { */
   /*     radio.openWritingPipe(pipes[1]); */
@@ -134,7 +134,7 @@ void setup(void)
     delay(1000);
   }
 
-  unsigned int i;
+  unsigned short i;
   for(i = 0; i < nButtons; ++i)
     pinMode(buttonPin[i],INPUT);
   
@@ -170,7 +170,7 @@ void loop(void)
       // Take the time, and send it.  This will block until complete
       /* unsigned long time = millis(); */
       /* printf("Now sending %lu...",time); */
-      bool ok = radio.write( &curr, sizeof(unsigned int) );
+      bool ok = radio.write( &curr, sizeof(unsigned short) );
       prev = curr;
     
       if (ok)
@@ -199,8 +199,8 @@ void loop(void)
       /* else */
       /* 	{ */
       /* 	  // Grab the response, compare, and send to debugging spew */
-      /* 	  unsigned int got_buttons; */
-      /* 	  radio.read( &got_buttons, sizeof(unsigned int) ); */
+      /* 	  unsigned short got_buttons; */
+      /* 	  radio.read( &got_buttons, sizeof(unsigned short) ); */
 
       /* 	  // Spew it */
       /* 	  printf("Got response %u\n\r",got_buttons); */
@@ -256,26 +256,26 @@ void loop(void)
   //
 
   /* if ( Serial.available() ) */
-    /* { */
-    /*   int buttonState = digitalRead(buttonPin); */
-    /*   if ( buttonState == HIGH && role == role_pong_back ) */
-    /* 	{ */
-    /* 	  /\* printf("*** CHANGING TO TRANSMIT ROLE -- PRESS 'R' TO SWITCH BACK\n\r"); *\/ */
+  /* { */
+  /*   int buttonState = digitalRead(buttonPin); */
+  /*   if ( buttonState == HIGH && role == role_pong_back ) */
+  /* 	{ */
+  /* 	  /\* printf("*** CHANGING TO TRANSMIT ROLE -- PRESS 'R' TO SWITCH BACK\n\r"); *\/ */
 
-    /* 	  // Become the primary transmitter (ping out) */
-    /* 	  role = role_ping_out; */
-    /* 	  radio.openWritingPipe(pipes[0]); */
-    /* 	  radio.openReadingPipe(1,pipes[1]); */
-    /* 	} */
-    /*   else if ( buttonState == LOW && role == role_ping_out ) */
-    /* 	{ */
-    /* 	  /\* printf("*** CHANGING TO RECEIVE ROLE -- PRESS 'T' TO SWITCH BACK\n\r"); *\/ */
+  /* 	  // Become the primary transmitter (ping out) */
+  /* 	  role = role_ping_out; */
+  /* 	  radio.openWritingPipe(pipes[0]); */
+  /* 	  radio.openReadingPipe(1,pipes[1]); */
+  /* 	} */
+  /*   else if ( buttonState == LOW && role == role_ping_out ) */
+  /* 	{ */
+  /* 	  /\* printf("*** CHANGING TO RECEIVE ROLE -- PRESS 'T' TO SWITCH BACK\n\r"); *\/ */
       
-    /* 	  // Become the primary receiver (pong back) */
-    /* 	  role = role_pong_back; */
-    /* 	  radio.openWritingPipe(pipes[1]); */
-    /* 	  radio.openReadingPipe(1,pipes[0]); */
-    /* 	} */
-    /* } */
+  /* 	  // Become the primary receiver (pong back) */
+  /* 	  role = role_pong_back; */
+  /* 	  radio.openWritingPipe(pipes[1]); */
+  /* 	  radio.openReadingPipe(1,pipes[0]); */
+  /* 	} */
+  /* } */
 }
 // vim:cin:ai:sts=2 sw=2 ft=cpp
