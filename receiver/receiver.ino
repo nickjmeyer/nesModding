@@ -102,8 +102,6 @@ void setup(void)
   // improve reliability
   radio.setPayloadSize(8);
 
-  radio.setAutoAck(false);
-
   //
   // Open pipes to other nodes for communication
   //
