@@ -53,9 +53,9 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 /* role_e role = role_pong_back; */
 
 const unsigned short nButtons = 2;
-const unsigned short keys[] = {97, // a
-			       176}; // return
-const char* name[] = {"a","RETURN"};
+const unsigned short keys[] = {216, // left
+			       215}; // right
+const char* name[] = {"LEFT","RIGHT"};
 
 unsigned short curr = 0,prev = 0;
 
@@ -67,11 +67,11 @@ void keyMap(const unsigned short curr, const unsigned short prev,
   for(i = 0; i < nButtons; ++i){
     if((change & (1u << i)) && (curr & (1u << i))){
       printf("Press %s\n\r",name[i]);
-      /* Keyboard.press(keys[i]); */
+      Keyboard.press(keys[i]);
     }
     else if(change & (1u << i)){
       printf("Release %s\n\r",name[i]);
-      /* Keyboard.release(keys[i]); */
+      Keyboard.release(keys[i]);
     }
   }
 }
@@ -101,6 +101,9 @@ void setup(void)
   // optionally, reduce the payload size.  seems to
   // improve reliability
   radio.setPayloadSize(sizeof(unsigned short));
+
+  // acknowledge payload
+  radio.enableAckPayload();
 
   //
   // Open pipes to other nodes for communication
@@ -229,6 +232,8 @@ void loop(void)
 	  // make the transition to receiver
 	  /* delay(20); */
 	}
+
+      /* radio.writeAckPayload(1,&got_buttons,sizeof(unsigned short)); */
 
       /* printf("write..."); */
       /* Keyboard.write(KEY_RETURN); */

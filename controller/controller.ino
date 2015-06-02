@@ -97,6 +97,9 @@ void setup(void)
   // improve reliability
   radio.setPayloadSize(sizeof(unsigned short));
 
+  // acknowledge payload
+  radio.enableAckPayload();
+
   //
   // Open pipes to other nodes for communication
   //
@@ -179,6 +182,14 @@ void loop(void)
       else
 	printf("failed.\n\r");
 
+      /* delay(1000); */
+
+      /* if(radio.isAckPayloadAvailable()){ */
+      /* 	unsigned short check; */
+      /* 	radio.read(&check,sizeof(unsigned short)); */
+      /* 	printf("Ack payload: %u.\n\r",check); */
+      /* } */
+      
       // Now, continue listening
       radio.startListening();
       radio.stopListening();
