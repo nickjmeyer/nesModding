@@ -20,6 +20,7 @@ unsigned short getButtons(const unsigned short nButtons,
 
 unsigned short getButtons(const unsigned short nButtons,
 			  const unsigned short * const buttonPin){
+  // write each button to a bit
   unsigned short i,buttons = 0,state;
   for(i = 0; i < nButtons; ++i){
     state = digitalRead(buttonPin[i]);
