@@ -42,6 +42,9 @@ void setup(void){
   // optionally, increase the delay between retries & # of retries
   radio.setRetries(15,15);
 
+  // turn off auto ack
+  radio.setAutoAck(0);
+
   // optionally, reduce the payload size.  seems to
   // improve reliability
   radio.setPayloadSize(sizeof(unsigned short));
