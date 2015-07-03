@@ -33,6 +33,7 @@ void keyMap(const unsigned short curr, const unsigned short prev,
   }
 }
 
+
 void setup(void){
   Serial.begin(57600);
   printf_begin();

@@ -1,11 +1,3 @@
-/*
- Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
- */
-
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
@@ -19,69 +11,53 @@
 
 RF24 radio(9,10);
 
-// sets the role of this unit in hardware.  Connect to GND to be the 'pong' receiver
-// Leave open to be the 'ping' transmitter
-const short role_pin = 7;
+const int dryRunPin = 7;
 
-//
-// Topology
-//
+bool isDryRun = false;
 
-// Single radio pipe address for the 2 nodes to communicate.
-const uint64_t pipe = 0xE8E8F0F0E1LL;
 
-//
-// Role management
-//
-// Set up role.  This sketch uses the same software for all the nodes in this
-// system.  Doing so greatly simplifies testing.  The hardware itself specifies
-// which node it is.
-//
-// This is done through the role_pin
-//
+// Radio pipe addresses for the 2 nodes to communicate.
+const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
-// The various roles supported by this sketch
-typedef enum { role_sender = 1, role_receiver } role_e;
+unsigned short curr,prev;
 
-// The debug-friendly names of those roles
-const char* role_friendly_name[] = { "invalid", "Sender", "Receiver"};
+const unsigned short nButtons = 3;
+const unsigned short keys[] = {216, // left
+			       215, // right
+			       176}; // RETURN
 
-// The role of the current running sketch
-role_e role;
+const char* name[] = {"LEFT","RIGHT","RETURN"};
 
-void setup(void)
-{
-  //
-  // Role
-  //
+void keyMap(const unsigned short curr, const unsigned short prev){
+  // map the button changes to keyboard commands
 
-  // set up the role pin
-  pinMode(role_pin, INPUT);
-  digitalWrite(role_pin,HIGH);
-  delay(20); // Just to get a solid reading on the role pin
+  isDryRun = !digitalRead(dryRunPin);
 
-  // read the address pin, establish our role
-  if ( digitalRead(role_pin) )
-    role = role_sender;
-  else
-    role = role_receiver;
+  unsigned short i,change;
+  change = curr ^ prev;
+  for(i = 0; i < nButtons; ++i){
+    if((change & (1u << i)) && (curr & (1u << i))){
+      printf("Press %s\n\r",name[i]);
+      if(!isDryRun)
+	Keyboard.press(keys[i]);
+    }
+    else if(change & (1u << i)){
+      printf("Release %s\n\r",name[i]);
+      if(!isDryRun)
+	Keyboard.release(keys[i]);
+    }
+  }
+}
 
-  //
-  // Print preamble
-  //
+
+void setup(void){
+  // determine if dry run or not
+  pinMode(dryRunPin,INPUT);
+  digitalWrite(dryRunPin,INPUT);
+  delay(20);
 
   Serial.begin(57600);
   printf_begin();
-
-  int i;
-  for(i = 0; i < 10; ++i){
-    printf("% 3d\n\r",i);
-    delay(1000);
-  }
-
-
-  printf("\n\rRF24/examples/pingpair_pl/\n\r");
-  printf("ROLE: %s\n\r",role_friendly_name[role]);
 
   //
   // Setup and configure rf radio
@@ -89,91 +65,68 @@ void setup(void)
 
   radio.begin();
 
-  // We will be using the Ack Payload feature, so please enable it
-  radio.enableAckPayload();
+  // optionally, increase the delay between retries & # of retries
+  radio.setRetries(15,15);
+
+  // optionally, reduce the payload size.  seems to
+  // improve reliability
+  radio.setPayloadSize(8);
 
   //
   // Open pipes to other nodes for communication
   //
 
-  // This simple sketch opens a single pipes for these two nodes to communicate
-  // back and forth.  One listens on it, the other talks to it.
-
-  if ( role == role_sender )
-  {
-    radio.openWritingPipe(pipe);
-  }
-  else
-  {
-    radio.openReadingPipe(1,pipe);
-  }
+  radio.openWritingPipe(pipes[1]);
+  radio.openReadingPipe(1,pipes[0]);
 
   //
   // Start listening
   //
 
-  if ( role == role_receiver )
-    radio.startListening();
+  radio.startListening();
 
   //
   // Dump the configuration of the rf unit for debugging
   //
 
   radio.printDetails();
+
+  curr = 0;
+  prev = -1;
 }
 
-void loop(void)
-{
-  static uint32_t message_count = 0;
-
+void loop(void){
   //
-  // Sender role.  Repeatedly send the current time
+  // Pong back role.  Receive each packet, dump it out, and send it back
   //
 
-  if (role == role_sender)
-  {
-    // Take the time, and send it.  This will block until complete
-    unsigned long time = millis();
-    printf("Now sending %lu...",time);
-    radio.write( &time, sizeof(unsigned long) );
+  // if there is data ready
+  if (radio.available()){
+    prev = curr;
+    // Dump the payloads until we've gotten everything
+    bool done = false;
+    while (!done){
+      // Fetch the payload, and see if this was the last one.
+      done = radio.read( &curr, sizeof(unsigned short) );
 
-    if ( radio.isAckPayloadAvailable() )
-    {
-      radio.read(&message_count,sizeof(message_count));
-      printf("Ack: [%lu] ",message_count);
+      // Spew it
+      printf("Got payload %hu...",curr);
+
+      // Delay just a little bit to let the other unit
+      // make the transition to receiver
+      delay(20);
     }
-    printf("OK\n\r");
 
-    // Try again soon
-    delay(2000);
-  }
+    // First, stop listening so we can talk
+    radio.stopListening();
 
-  //
-  // Receiver role.  Receive each packet, dump it out, add ack payload for next time
-  //
+    // Send the final one back.
+    radio.write( &curr, sizeof(unsigned short) );
+    printf("Sent response.\n\r");
 
-  if ( role == role_receiver )
-  {
-    // if there is data ready
-    if ( radio.available() )
-    {
-      // Dump the payloads until we've gotten everything
-      static unsigned long got_time;
-      bool done = false;
-      while (!done)
-      {
-        // Fetch the payload, and see if this was the last one.
-        done = radio.read( &got_time, sizeof(unsigned long) );
+    keyMap(curr,prev);
 
-        // Spew it
-        printf("Got payload %lu\n",got_time);
-      }
-
-      // Add an ack packet for the next time around.  This is a simple
-      // packet counter
-      radio.writeAckPayload( 1, &message_count, sizeof(message_count) );
-      ++message_count;
-    }
+    // Now, resume listening so we catch the next packets.
+    radio.startListening();
   }
 }
-// vim:ai:cin:sts=2 sw=2 ft=cpp

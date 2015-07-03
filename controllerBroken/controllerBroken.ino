@@ -31,6 +31,7 @@ unsigned short getButtons(const unsigned short nButtons,
   return buttons;
 }
 
+
 void setup(void){
   Serial.begin(57600);
   printf_begin();
@@ -52,7 +53,7 @@ void setup(void){
   unsigned short i;
   for(i = 0; i < nButtons; ++i)
     pinMode(buttonPin[i],INPUT);
-  
+
   curr = prev = 0;
 }
 
@@ -60,20 +61,20 @@ void setup(void){
 
 void loop(void){
   curr = getButtons(nButtons,buttonPin);
-  
+
   if(curr != prev){
     printf("Buttons: %u\n\r",curr);
-  
+
     bool ok = radio.write( &curr, sizeof(unsigned short) );
     prev = curr;
-    
+
     if (ok)
       printf("sent.\n\r");
     else
       printf("failed.\n\r");
 
     // have to cycle listening otherwise communication fails
-    /* radio.startListening(); */
-    /* radio.stopListening(); */
+    radio.startListening();
+    radio.stopListening();
   }
 }
