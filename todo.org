@@ -7,7 +7,7 @@
 
 * TODO Gut broken NES components
   - [ ] Clean inside
-    
+
 * TODO Install RetroArch on Odroid C1
   - [X] Install Android
   - [ ] Clone RetroArch repo and install
@@ -15,12 +15,13 @@
   - [ ] Obtain ROMs and test with keyboard and mouse
 
 * TODO Mod Controllers for games and mouse
-  - [-] Writing the code
+  - [-] Writing the code [80%]
     - [X] Begin with starter kit and simple projects
-    - [ ] Implement simple button program to send keystroke to host
-    - [ ] Get a MWE for the nRF24L01+ modules
-    - [ ] Send the keystroke ofer the nRF24L01+ connection
-  - [ ] Power efficiency
+    - [X] Implement simple button program to send keystroke to host
+    - [X] Get a MWE for the nRF24L01+ modules
+    - [X] Send the keystroke over the nRF24L01+ connection
+    - [ ] Setup the one way communication
+  - [ ] Power efficiency [%]
     - [ ] Measure the amperage with the multimeter
     - [ ] Determine battery life for coin,AA,Li-ion
     - [ ] Research constructing an Arduino from scratch
@@ -28,7 +29,7 @@
       - [ ] Voltage
       - [ ] Clock rate
       - [ ] Too many other tings...
-  - [ ] Mod Wii Nunchuck to be a mouse
+  - [ ] Mod Wii Nunchuck to be a mouse [%]
     - [ ] Supplies
       - [ ] Wii Nunchuck
       - [ ] Arduino Mini (no USB dongle, smaller profile)
@@ -38,7 +39,7 @@
     - [ ] Configure arduino to send Nunchuck output to julia via serial
     - [ ] Write julia script to send serial messages as mouse commands
     - [ ] Test reliability and plug/unplug
-  - [ ] Mod NES controllers to send keyboard inputs for ROMs
+  - [ ] Mod NES controllers to send keyboard inputs for ROMs [%]
     - [ ] Supplies
       - [ ] NES controller for XBMC
       - [ ] Console controllers for ROMs
@@ -47,14 +48,6 @@
       - [ ] USB cable
       - [ ] Breadboard and cables for staging
     - [ ] Configure controller to send keyboard inputs via julia script
-  - [ ] Mod other controllers
+  - [ ] Mod other controllers [%]
     - [ ] SNES
     - [ ] N64
-  - [ ] Replace USB cable connections with bluetooth connections
-    - [ ] Supplies
-      - [ ] BLE shields
-      - [ ] Labels to match controller with receiver
-    - [ ] NES remote for XBMC
-    - [ ] Console controllers for ROMs (maybe?)
-
-
