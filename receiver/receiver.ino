@@ -21,12 +21,32 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
 unsigned short curr,prev;
 
-const unsigned short nButtons = 3;
-const unsigned short keys[] = {216, // left
-			       215, // right
-			       176}; // RETURN
+const unsigned short nButtons = 12;
+const unsigned short keys[] = {177, // B -> b
+			       121, // Y -> y
+			       133, // select -> shift
+			       176, // start -> return
+			       218, // up -> up
+			       217, // down -> down
+			       216, // left -> left
+			       215, // right -> right
+			       176, // A -> return
+			       120, // X -> x
+			       178, // L -> backspace
+			       32}; // R -> space
 
-const char* name[] = {"LEFT","RIGHT","RETURN"};
+const char* name[] = {"ONE",
+		      "TWO",
+		      "THREE",
+		      "FOUR",
+		      "FIVE",
+		      "SIX",
+		      "SEVEN",
+		      "EIGHT",
+		      "NINE",
+		      "TEN",
+		      "ELEVEN",
+		      "TWELVE"};
 
 void keyMap(const unsigned short curr, const unsigned short prev){
   // map the button changes to keyboard commands
