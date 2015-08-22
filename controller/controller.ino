@@ -17,23 +17,39 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 
 unsigned short curr,prev;
 
-// button
-const unsigned short nButtons = 3;
-const unsigned short buttonPin[] = {5,6,7};
+// button setup
+const unsigned short nButtons = 12;
+const unsigned short clock = 7; // blue
+const unsigned short latch = 6; // yellow
+const unsigned short data = 5; // red
+// ground -> black
+// 5v -> white
 
 
 unsigned short getButtons(const unsigned short nButtons,
-			  const unsigned short * const buttonPin);
+			  const unsigned short clock,
+			  const unsigned short latch,
+			  const unsigned short data);
 
 unsigned short getButtons(const unsigned short nButtons,
-			  const unsigned short * const buttonPin){
-  // write each button to a bit
-  unsigned short i,buttons = 0,state;
+			  const unsigned short clock,
+			  const unsigned short latch,
+			  const unsigned short data){
+  digitalWrite(latch,HIGH);
+  /* delay(100); */
+  digitalWrite(latch,LOW);
+  unsigned short i;
+  unsigned short buttons = 0;
+  unsigned short swap = 1;
   for(i = 0; i < nButtons; ++i){
-    state = digitalRead(buttonPin[i]);
-    if(state == HIGH){
-      buttons |= (1u << i);
+    digitalWrite(clock,LOW);
+    /* delay(10); */
+    if(digitalRead(data) == LOW){
+      buttons |= swap;
     }
+    swap <<= 1;
+
+    digitalWrite(clock,HIGH);
   }
   return buttons;
 }
@@ -75,16 +91,16 @@ void setup(void){
 
   radio.printDetails();
 
-  unsigned short i;
-  for(i = 0; i < nButtons; ++i)
-    pinMode(buttonPin[i],INPUT);
+  pinMode(clock,OUTPUT); // clock (blue)
+  pinMode(latch,OUTPUT); // latch (yellow)
+  pinMode(data,INPUT); // data (red)
 
-  curr = getButtons(nButtons,buttonPin);
+  curr = getButtons(nButtons,clock,latch,data);
   prev = -1;
 }
 
 void loop(void){
-  curr = getButtons(nButtons,buttonPin);
+  curr = getButtons(nButtons,clock,latch,data);
   if(curr != prev){
 
     radio.stopListening();
