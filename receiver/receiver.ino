@@ -22,7 +22,7 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 unsigned short curr,prev;
 
 const unsigned short nButtons = 12;
-const unsigned short keys[] = {177, // B -> b
+const unsigned short keys[] = {177, // B -> ESC
 			       121, // Y -> y
 			       133, // select -> shift
 			       176, // start -> return
