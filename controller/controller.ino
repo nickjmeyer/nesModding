@@ -9,7 +9,7 @@
 
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 
-RF24 radio(9,10);
+RF24 radio(3,4);
 
 
 // Radio pipe addresses for the 2 nodes to communicate.
@@ -56,7 +56,7 @@ unsigned short getButtons(const unsigned short nButtons,
 
 
 void setup(void){
-  Serial.begin(57600);
+  Serial.begin(115200);
   printf_begin();
 
   //
