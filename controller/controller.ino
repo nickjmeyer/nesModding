@@ -24,8 +24,8 @@ unsigned short curr,prev;
 /* const unsigned short data = 5; // red */
 
 // button pins
-const unsigned short nButtons = 1;
-const unsigned short buttonPins[3] = {6};
+const unsigned short nButtons = 12;
+const unsigned short buttonPins[12] = {5,6,7,8,19,18,17,16,15,14,2,9};
 
 // ground -> black
 // 5v -> white
