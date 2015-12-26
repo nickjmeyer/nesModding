@@ -18,38 +18,43 @@ const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL };
 unsigned short curr,prev;
 
 // button setup
-const unsigned short nButtons = 12;
-const unsigned short clock = 7; // blue
-const unsigned short latch = 6; // yellow
-const unsigned short data = 5; // red
+/* const unsigned short nButtons = 12; */
+/* const unsigned short clock = 7; // blue */
+/* const unsigned short latch = 6; // yellow */
+/* const unsigned short data = 5; // red */
+
+// button pins
+const unsigned short nButtons = 1;
+const unsigned short buttonPins[3] = {6};
+
 // ground -> black
 // 5v -> white
 
 
-unsigned short getButtons(const unsigned short nButtons,
-			  const unsigned short clock,
-			  const unsigned short latch,
-			  const unsigned short data);
+unsigned short getButtons(const unsigned short nButtons);
+			  /* const unsigned short clock, */
+			  /* const unsigned short latch, */
+			  /* const unsigned short data); */
 
-unsigned short getButtons(const unsigned short nButtons,
-			  const unsigned short clock,
-			  const unsigned short latch,
-			  const unsigned short data){
-  digitalWrite(latch,HIGH);
+unsigned short getButtons(const unsigned short nButtons){
+			  /* const unsigned short clock, */
+			  /* const unsigned short latch, */
+			  /* const unsigned short data){ */
+  /* digitalWrite(latch,HIGH); */
   /* delay(100); */
-  digitalWrite(latch,LOW);
+  /* digitalWrite(latch,LOW); */
   unsigned short i;
   unsigned short buttons = 0;
   unsigned short swap = 1;
   for(i = 0; i < nButtons; ++i){
-    digitalWrite(clock,LOW);
+    /* digitalWrite(clock,LOW); */
     /* delay(10); */
-    if(digitalRead(data) == LOW){
+    if(digitalRead(buttonPins[i]) == LOW){
       buttons |= swap;
     }
     swap <<= 1;
 
-    digitalWrite(clock,HIGH);
+    /* digitalWrite(clock,HIGH); */
   }
   return buttons;
 }
@@ -91,16 +96,21 @@ void setup(void){
 
   radio.printDetails();
 
-  pinMode(clock,OUTPUT); // clock (blue)
-  pinMode(latch,OUTPUT); // latch (yellow)
-  pinMode(data,INPUT); // data (red)
+  /* pinMode(clock,OUTPUT); // clock (blue) */
+  /* pinMode(latch,OUTPUT); // latch (yellow) */
+  /* pinMode(data,INPUT); // data (red) */
 
-  curr = getButtons(nButtons,clock,latch,data);
+  int i;
+  for(i = 0; i < nButtons; ++i){
+    pinMode(buttonPins[i],INPUT_PULLUP);
+  }
+
+  curr = getButtons(nButtons);/* ,clock,latch,data); */
   prev = -1;
 }
 
 void loop(void){
-  curr = getButtons(nButtons,clock,latch,data);
+  curr = getButtons(nButtons);/* ,clock,latch,data); */
   if(curr != prev){
 
     radio.stopListening();
@@ -119,9 +129,10 @@ void loop(void){
 
     // Wait here until we get a response, or timeout (250ms)
     unsigned long started_waiting_at = millis();
+    unsigned long wait = 300;
     bool timeout = false;
     while ( ! radio.available() && ! timeout )
-      if (millis() - started_waiting_at > 200 )
+      if (millis() - started_waiting_at > wait )
 	timeout = true;
 
     // Describe the results

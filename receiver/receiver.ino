@@ -73,7 +73,7 @@ void keyMap(const unsigned short curr, const unsigned short prev){
 void setup(void){
   // determine if dry run or not
   pinMode(dryRunPin,INPUT);
-  digitalWrite(dryRunPin,INPUT);
+  /* digitalWrite(dryRunPin,INPUT); */
   delay(20);
 
   Serial.begin(57600);
